@@ -1,10 +1,8 @@
-// Entry point for the application
-// Responsible for starting the server and listening on a port
+import "dotenv/config";
+import app from "./app.js";
 
-// Import app from app.js
+const PORT = process.env.PORT || 3000;
 
-
-// Connect to database
-
-
-// Start listening on process.env.PORT
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
