@@ -15,5 +15,3 @@ Creating Your Place, a website that allows users to host rooms and events and co
 
 # CONTRIBUTORS
 - [CAT](https://github.com/catbrandt)
-
-test (to remove)
