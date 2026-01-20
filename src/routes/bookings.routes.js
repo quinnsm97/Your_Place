@@ -1,15 +1,18 @@
-const express = require('express');
-const bookingController = require('../controllers/bookings.controller');
-const router = express.Router();
+// Import Express
+const express = require('express')
+//Import booking Controller
+const bookingController = require('../controllers/bookings.controller')
+//Create an instance of an Express Router
+const router = express.Router()
 
 // Create a new booking (requires eventId or SpaceId)
 router.post('/', bookingController.createBooking);
 
-// Get all bookings
+// Get all bookings (supports query filters: userId, eventId, spaceId, paymentStatus)
 router.get('/', bookingController.getAllBookings);
 
 // Get a specific booking by its ID
-router.get('/:id', bookingController.GetBookingById);
+router.get('/:id', bookingController.getBookingById);
 
 // Get all bookings for a user (both events and spaces)
 router.get('/user/:userId', bookingController.getBookingsByUserId);
@@ -21,7 +24,7 @@ router.get('/event/:eventId', bookingController.getBookingsByEventId);
 router.get('/space/:spaceId', bookingController.getBookingsBySpaceId);
 
 // Update a booking
-router.put('/:id', bookingController.updateBooking)
+router.put('/:id', bookingController.updateBooking);
 
 // Delete a booking
 router.delete('/:id', bookingController.deleteBooking);

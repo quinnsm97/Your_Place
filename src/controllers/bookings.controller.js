@@ -1,6 +1,4 @@
-const { updateBooking } = require("../models/Booking")
-
-const bookingModel = resquire('../models/Booking')
+const bookingModel = require('../models/Booking')
 
 const createBooking = async (req, res) => {
     try{
@@ -56,7 +54,7 @@ const getBookingById = async (req, res) => {
             return res.status(404).json({ error: "Booking not found"})
         }
 
-        return res.status(200).json(updateBooking)}
+        return res.status(200).json(booking)}
 
             catch (error) {
                 console.error('Error fetching bookings', error)
@@ -122,7 +120,6 @@ const updateBooking = async (req, res) => {
 const deleteBooking = async (req, res) => {
     try {
         const {id} = req.params
-        const {quantity, totalPrice, paymentStatus} = req.body
         const booking = await bookingModel.deleteBooking(id)
 
         if(!booking) {
