@@ -16,3 +16,7 @@ Creating Your Place, a website that allows users to host rooms and events and co
 - CRUD Operations for tasks (Create, Read, Update, Delete)
 - Hosts can share space locations and events
 - Users can book in to spaces and events
+
+# CONTRIBUTORS
+
+- [Cat Brandt](https://github.com/catbrandt)
