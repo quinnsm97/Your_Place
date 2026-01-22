@@ -28,7 +28,11 @@ async function register(req, res, next) {
     const token = createToken(user)
 
     return res.status(201).json({
-      user,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      },
       token,
     })
   } catch (error) {
