@@ -1,76 +1,76 @@
 const request = require('supertest')
 const app = require('../app')
-const pool = require('../db/pool')
+const { query } = require('../db/pool')
 
-describe('Booking Controller', () => {
+describe('Bookings API', () => {
   let testUserId
   let testSpaceId
   let testEventId
-  let testBookingId
 
-  beforeAll(async () => {
-    // Creation of test user
-    const userResult = await pool.query(
+  beforeEach(async () => {
+    // NOTE: jest.setup.js runs beforeEach too and wipes bookings/events/spaces.
+    // So we seed fresh data here (after that wipe) so FK constraints pass.
+
+    const email = `booking+${Date.now()}-${Math.random().toString(16).slice(2)}@test.com`
+
+    const userRes = await query(
       `INSERT INTO users (full_name, email, password_hash, role, locale)
-            VALUES ($1, $2, $3, $4, $5)
-            RETURNING id`,
-      ['Test User', 'test@email.com', 'hashedpassword', 'user', 'en']
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING id`,
+      ['Booking Test User', email, 'dummy_hash', 'user', 'en']
     )
-    testUserId = userResult.rows[0].id
+    testUserId = userRes.rows[0].id
 
-    // Creation of test space
-    const spaceResult = await pool.query(
-      `INSERT INTO spaces (host_user_id, name, description, address, city, country, capacity) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7) 
-            RETURNING id`,
+    const spaceRes = await query(
+      `INSERT INTO spaces (host_user_id, name, description, address, city, country, capacity)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING id`,
       [testUserId, 'Test Space', 'A test space', '1 Test Rd', 'City', 'Country', 5]
     )
-    testSpaceId = spaceResult.rows[0].id
+    testSpaceId = spaceRes.rows[0].id
 
-    // Creation of test event
-    const eventResult = await pool.query(
-      `INSERT INTO events (host_user_id, space_id, title, description, category, duration_minutes, start_at,
-            end_at, capacity, price_per_spot, status) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
-            RETURNING id`,
+    const eventRes = await query(
+      `INSERT INTO events (
+         host_user_id, space_id, title, description, category,
+         start_at, end_at, capacity, price_per_spot, status
+       )
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+       RETURNING id`,
       [
         testUserId,
         testSpaceId,
         'Test Event',
         'A test event',
         'Movement',
-        90,
-        '2026-03-02 08:00:00',
-        '2026-03-02 09:30:00',
+        '2030-03-02T08:00:00.000Z',
+        '2030-03-02T09:30:00.000Z',
         20,
         10.0,
         'active',
       ]
     )
-    testEventId = eventResult.rows[0].id
+    testEventId = eventRes.rows[0].id
   })
 
-  afterAll(async () => {
-    // Removal of test data after testing run
-    await pool.query('DELETE FROM bookings WHERE user_id = $1', [testUserId])
-    await pool.query('DELETE FROM events WHERE host_user_id = $1', [testUserId])
-    await pool.query('DELETE FROM spaces WHERE host_user_id = $1', [testUserId])
-    await pool.query('DELETE FROM users WHERE id = $1', [testUserId])
-    await pool.end()
+  afterEach(async () => {
+    // jest.setup.js cleans bookings/events/spaces; we just clean our extra user.
+    if (testUserId) {
+      await query('DELETE FROM users WHERE id = $1', [testUserId])
+    }
   })
 
-  // Test One: Creation of an event booking
-  it('Should create new event booking', async () => {
-    const response = await request(app).post('/bookings').send({
+  it('POST /bookings creates a new event booking (201)', async () => {
+    const res = await request(app).post('/bookings').send({
       eventId: testEventId,
       userId: testUserId,
-      quantity: 3,
-      totalPrice: 30.0,
+      quantity: 1,
+      totalPrice: 50,
       paymentStatus: 'pending',
     })
-    expect(response.status).toBe(201)
-    expect(response.body).toHavProperty('id')
-    expect(response.body.event_id).toBe(testEventId)
-    testBookingId = response.body.id
+
+    expect(res.status).toBe(201)
+    expect(res.body).toHaveProperty('id')
+    expect(res.body.event_id).toBe(testEventId)
+    expect(res.body.user_id).toBe(testUserId)
   })
 })

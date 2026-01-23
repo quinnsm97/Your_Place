@@ -2,6 +2,11 @@ const request = require("supertest");
 const app = require("../app");
 const { query } = require("../db/pool");
 
+const { createToken } = require('../services/auth.service')
+
+const hostToken = createToken({ id: 1, role: 'host' })
+const auth = { Authorization: `Bearer ${hostToken}` }
+
 async function seedSpace({ hostUserId = 1, name = "Test Space", city = "Sydney" } = {}) {
   const { rows } = await query(
     `INSERT INTO spaces (host_user_id, name, description, address, city, country, capacity)
@@ -38,6 +43,7 @@ describe("Events API", () => {
 
     const res = await request(app)
       .post("/events")
+      .set(auth)
       .send({
         space_id: mySpace.id,
         title: "My Event",
@@ -92,6 +98,7 @@ describe("Events API", () => {
     // owned: ok
     const ok = await request(app)
       .patch(`/events/${ownedEvent.id}`)
+      .set(auth)
       .send({ title: "Updated" });
 
     expect(ok.status).toBe(200);
@@ -100,6 +107,7 @@ describe("Events API", () => {
     // not owned: 403
     const forbidden = await request(app)
       .patch(`/events/${otherEvent.id}`)
+      .set(auth)
       .send({ title: "Hack" });
 
     expect(forbidden.status).toBe(403);
@@ -113,11 +121,11 @@ describe("Events API", () => {
     const otherEvent = await seedEvent({ hostUserId: 2, spaceId: otherSpace.id });
 
     // not owned: 403
-    const forbidden = await request(app).delete(`/events/${otherEvent.id}`);
+    const forbidden = await request(app).delete(`/events/${otherEvent.id}`).set(auth);
     expect(forbidden.status).toBe(403);
 
     // owned: 204
-    const ok = await request(app).delete(`/events/${ownedEvent.id}`);
+    const ok = await request(app).delete(`/events/${ownedEvent.id}`).set(auth);
     expect(ok.status).toBe(204);
 
     const after = await request(app).get(`/events/${ownedEvent.id}`);
