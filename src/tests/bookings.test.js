@@ -1,4 +1,5 @@
 const request = require('supertest')
+const { it } = require('zod/v4/locales')
 const app = require('../app')
 const pool = require('../db/pool')
 
@@ -72,5 +73,51 @@ describe('Booking Controller', () => {
     expect(response.body).toHavProperty('id')
     expect(response.body.event_id).toBe(testEventId)
     testBookingId = response.body.id
+  })
+
+  // Test Two: Get all bookings
+  it('should get all bookings', async () => {
+    const response = await request (app).get('/bookings')
+
+    expect(response.status).toBe(200)
+    expect(Array.isArray(response.body)).toBe(true)
+  })
+
+  // Test Three: Get booking by ID
+  it('should get booking by ID', async () => {
+    const response = await request(app).get(`/bookings/${testBookingId}`)
+
+    expect(response.status).toBe(200)
+    expect(response.body.id).toBe(testBookingId)
+  })
+
+  // Test Four: Get booking by User ID
+  it('should get all bookings for a user', async () => {
+    const reponse = await request(app).get(`/bookings/user/${testUserId}`)
+
+    expect(response.status).toBe(200)
+    expect(Array.isArray(app.response.body)).toBe(true)
+    expect(app.response.body.length).toBeGreaterThan(0)
+  })
+
+  // Test Five: Update Booking
+  it('should update a booking', async () => {
+    const response = await request(app).put(`/bookings/${testBookingId}`).send({
+      quantity: 3,
+      totalPrice: 75.0,
+      paymentStatus: 'paid',
+    })
+
+    expect(response.status).toBe(200)
+    expect(response.bosy.quantity).toBe(4)
+    expect(response.bosy.payment_status).toBe('paid')
+  })
+
+  // Test Six: Delete a booking
+  it('should delete a booking', async () => {
+    const response = await request(app).delete(`/bookings/${testBookingId}`)
+
+    expect(response.status).toBe(200)
+    expect(response.body).toHaveProperty('message')
   })
 })
