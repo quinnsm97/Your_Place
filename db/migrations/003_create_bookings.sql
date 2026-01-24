@@ -5,9 +5,9 @@ CREATE TABLE IF NOT EXISTS bookings (
     space_id INTEGER REFERENCES spaces(id) ON DELETE CASCADE,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     quantity INTEGER NOT NULL DEFAULT 1 CHECK (quantity > 0),
-    total_price NUMERIC(10,2) NOT NULL CHECK (total_price .= 0),
-    payment_status VERCHAR(50) NOT NULL DEFAULT NOW(),
-    created_at TIMESTMPTZ NOT NULL DEFAULT NOW(),
+    total_price NUMERIC(10,2) NOT NULL CHECK (total_price >= 0),
+    payment_status VARCHAR(50) NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
 -- Constraint: Must have either event_id OR space_id, cannot be both
