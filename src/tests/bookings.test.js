@@ -4,13 +4,12 @@ const pool = require('../db/pool')
 
 describe('Booking Controller', () => {
   let testHostUserId
-  let testUserId  
+  let testUserId
   let testSpaceId
   let testEventId
   let testBookingId
 
   beforeAll(async () => {
-
     // Creation of test host for spaces/events
     const hostResult = await pool.query(
       `INSERT INTO users (full_name, email, password_hash, role, locale)
@@ -66,7 +65,7 @@ describe('Booking Controller', () => {
     await pool.query('DELETE FROM bookings WHERE user_id = $1', [testUserId])
     await pool.query('DELETE FROM events WHERE host_user_id = $1', [testHostUserId])
     await pool.query('DELETE FROM spaces WHERE host_user_id = $1', [testHostUserId])
-    await pool.query('DELETE FROM users WHERE id = $1', [testHostUserId, testUserId])
+    await pool.query('DELETE FROM users WHERE id IN ($1, $2)', [testHostUserId, testUserId])
     await pool.end()
   })
 
