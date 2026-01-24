@@ -1,127 +1,131 @@
-const bookingModel = require('../models/bookings.model')
-
-const createBooking = async (req, res) => {
+const bookingService = require('../services/bookings.service')
+/**
+ * Create a new booking
+ */
+const createBooking = async (req, res, next) => {
   try {
-    const { eventId, spaceId, userId, quantity, totalPrice, paymentStatus } = req.body
+    // Validate request body with Zod
+    const payload = bookingService.createBookingSchema.parse(req.body)
+    
+    // Create booking with service layer
+    const booking = await bookingService.createBooking(payload)
 
-    // Validation that either eventId or spaceId provided (cannot be both)
-    if ((!eventId && !spaceId) || (eventId && spaceId)) {
-      return res.status(400).json({
-        error: 'Must provide either eventId OR spaceId (cannot be both)',
-      })
-    }
-
-    if (!userId || !quantity || !totalPrice) {
-      return res.status(400).json({
-        error: 'Required fields missing',
-      })
-    }
-
-    const booking = await bookingModel.createBooking(
-      eventId || null,
-      spaceId || null,
-      userId,
-      quantity,
-      totalPrice,
-      paymentStatus || 'pending'
-    )
     return res.status(201).json(booking)
   } catch (error) {
-    console.error('Error creating booking:', error)
-    return res.status(500).json({ error: 'Booking creation failed' })
+    next(error)
   }
 }
 
-const getAllBookings = async (req, res) => {
+/**
+ * Get all bookings
+ */
+const getAllBookings = async (req, res, next) => {
   try {
-    const bookings = await bookingModel.getAllBookings()
+    const bookings = await bookingService.listBookings()
     return res.status(200).json(bookings)
   } catch (error) {
-    console.error('Error fetching bookings:', error)
-    return res.status(500).json({ error: 'Fetch bookings failed' })
+    next(error)
   }
 }
 
-const getBookingById = async (req, res) => {
+/**
+ * Get a particular booking by ID
+ */
+const getBookingById = async (req, res, next) => {
   try {
-    const { id } = req.params
-    const booking = await bookingModel.getBookingById(id)
+    // Validate ID
+    const { id } = bookingService.idParamSchema.parse(req.params)
 
-    //
-    if (!booking) {
-      return res.status(404).json({ error: 'Booking not found' })
-    }
-
+    const booking = await bookingService.getBookingById(id)
     return res.status(200).json(booking)
   } catch (error) {
-    console.error('Error fetching bookings', error)
-    return res.status(500).json({ error: 'Fetch bookings failed' })
+    next(error)
   }
 }
 
-const getBookingsByUserId = async (req, res) => {
+/**
+ * Get all bookings for a specific user
+ */
+const getBookingsByUserId = async (req, res, next) => {
   try {
-    const { userId } = req.params
-    const bookings = await bookingModel.getBookingsByUserId(userId)
+    // Validate user ID
+    const { userId } = bookingService.userIdParamSchema.parse(req.params)
+
+    const bookings = await bookingService.getBookingsByUserId(userId)
     return res.status(200).json(bookings)
   } catch (error) {
-    console.error('Error fetching user bookings:', error)
-    return res.status(500).json({ error: 'Failed to fetch user bookings' })
+    next(error)
   }
 }
 
-const getBookingsByEventId = async (req, res) => {
+/**
+ * Get all bookings for a specific event
+ */
+const getBookingsByEventId = async (req, res, next) => {
   try {
-    const { eventId } = req.params
-    const bookings = await bookingModel.getBookingsByEventId(eventId)
+    // Validate event ID
+    const { eventId } = bookingService.eventIdParamSchema.parse(req.params)
+
+    const bookings = await bookingService.getBookingsByEventId(eventId)
     return res.status(200).json(bookings)
   } catch (error) {
-    console.error('Error fetching event bookings:', error)
-    return res.status(500).json({ error: 'Failed to fetch event bookings' })
+    next(error)
   }
 }
 
-const getBookingsBySpaceId = async (req, res) => {
+/**
+ * Get all bookings for a specific space
+ */
+const getBookingsBySpaceId = async (req, res, next) => {
   try {
-    const { spaceId } = req.params
-    const bookings = await bookingModel.getBookingsBySpaceId(spaceId)
+    // Validate space ID
+    const { spaceId } = bookingService.spaceIdParamSchema.parse(req.params)
+
+    const bookings = await bookingService.getBookingsBySpaceId(spaceId)
     return res.status(200).json(bookings)
   } catch (error) {
-    console.error('Error fetching space bookings:', error)
-    return res.status(500).json({ error: 'Failed to fetch space bookings' })
+    next(error)
   }
 }
 
-const updateBooking = async (req, res) => {
+/**
+ * Update an existing booking
+ * Only the owner of the booking (user who booked) can update their booking
+ */
+const updateBooking = async (req, res, next) => {
   try {
-    const { id } = req.params
-    const { quantity, totalPrice, paymentStatus } = req.body
-    const booking = await bookingModel.updateBooking(id, quantity, totalPrice, paymentStatus)
-
-    if (!booking) {
-      return res.status(404).json({ error: 'Booking not found' })
-    }
-
+    // Validate ID
+    const { id } = bookingService.idParamSchema.parse(req.params)
+    
+    // Validate update payload
+    const payload = bookingService.updateBookingSchema.parse(req.body)
+    
+    // Get user ID from authenticated user
+    const userId = req.body.userId || req.user?.id
+    
+    const booking = await bookingService.updateBooking(userId, id, payload)
     return res.status(200).json(booking)
   } catch (error) {
-    console.error('Error updating booking:', error)
-    return res.status(500).json({ error: 'Update booking failed' })
+    next(error)
   }
 }
 
-const deleteBooking = async (req, res) => {
+/**
+ * Delete a booking
+ * Only the owner of the booking (user who booked) can delete their booking
+ */
+const deleteBooking = async (req, res, next) => {
   try {
-    const { id } = req.params
-    const booking = await bookingModel.deleteBooking(id)
-
-    if (!booking) {
-      return res.status(404).json({ error: 'Booking not found' })
-    }
-
-    return res.status(200).json({ message: 'Booking successfully deleted', booking })
+    // Validate ID
+    const { id } = bookingService.idParamSchema.parse(req.params)
+    
+    // Get user ID from authenticated user
+    const userId = req.body.userId || req.user?.id
+    
+    await bookingService.deleteBooking(userId, id)
+    return res.status(200).json({ message: 'Booking successfully deleted' })
   } catch (error) {
-    console.error('Error deleting booking:', error)
-    return res.status(500).json({ error: 'Delete booking failed' })
+    next(error)
   }
 }
 
