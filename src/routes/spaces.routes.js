@@ -1,38 +1,40 @@
-const express = require("express");
-const requireAuth = require("../middleware/requireAuth");
-const requireRole = require("../middleware/requireRole");
-const validate = require("../middleware/validate");
-const { createSpaceSchema, updateSpaceSchema, idParamSchema } = require("../services/spaces.service");
-const controller = require("../controllers/spaces.controller");
+const express = require('express')
+const requireAuth = require('../middleware/requireAuth')
+const requireRole = require('../middleware/requireRole')
+const validate = require('../middleware/validate')
+const {
+  createSpaceSchema,
+  updateSpaceSchema,
+  idParamSchema,
+} = require('../services/spaces.service')
+const controller = require('../controllers/spaces.controller')
 
-const router = express.Router();
+const router = express.Router()
 
-router.get("/", controller.listSpaces);
-router.get("/:id", validate(idParamSchema, "params"), controller.getSpaceById);
+router.get('/', controller.listSpaces)
+router.get('/:id', validate(idParamSchema, 'params'), controller.getSpaceById)
 
 router.post(
-  "/",
+  '/',
   requireAuth,
-  requireRole("host"),
+  requireRole('host'),
   validate(createSpaceSchema),
   controller.createSpace
-);
-
+)
 router.patch(
-  "/:id",
+  '/:id',
   requireAuth,
-  requireRole("host"),
-  validate(idParamSchema, "params"),
+  requireRole('host'),
+  validate(idParamSchema, 'params'),
   validate(updateSpaceSchema),
   controller.updateSpace
-);
-
+)
 router.delete(
-  "/:id",
+  '/:id',
   requireAuth,
-  requireRole("host"),
-  validate(idParamSchema, "params"),
+  requireRole('host'),
+  validate(idParamSchema, 'params'),
   controller.deleteSpace
-);
+)
 
-module.exports = router;
+module.exports = router

@@ -1,11 +1,23 @@
+const jwt = require('jsonwebtoken')
+const ApiError = require('../utils/ApiError')
+
 /**
- * TEMP STUB:
- * Replaced by real JWT middleware later.
- * This is only to unblock feature development.
+ * Require JWT auth header (Authorization: Bearer <token>).
+ * Sets req.user = { id, role } from decoded token.
  */
 function requireAuth(req, res, next) {
-  req.user = { id: 1, role: "host" };
-  next();
+  const auth = req.headers.authorization
+  if (!auth || !auth.startsWith('Bearer ')) {
+    return next(new ApiError(401, 'UNAUTHORIZED', 'Missing or invalid Authorization header'))
+  }
+  const token = auth.slice(7)
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    req.user = { id: decoded.id, role: decoded.role }
+    return next()
+  } catch (e) {
+    return next(new ApiError(401, 'UNAUTHORIZED', 'Invalid or expired token'))
+  }
 }
 
-module.exports = requireAuth;
+module.exports = requireAuth

@@ -1,4 +1,4 @@
-const db = require('../db/pool')
+const { query } = require('../db/pool')
 
 /**
  * Create a new booking for an event/space
@@ -16,7 +16,7 @@ const createBooking = async (eventId, spaceId, userId, quantity, totalPrice, pay
     throw new Error('Must provide either eventId OR spaceId (not both)')
   }
 
-  const result = await db.query(
+  const result = await query(
     `INSERT INTO bookings (event_id, space_id, user_id, quantity, total_price, payment_status) 
      VALUES ($1, $2, $3, $4, $5, $6) 
      RETURNING *`,
@@ -30,8 +30,46 @@ const createBooking = async (eventId, spaceId, userId, quantity, totalPrice, pay
  * @returns Array of all bookings by ID
  */
 const getAllBookings = async () => {
-  const result = await db.query('SELECT * FROM bookings ORDER BY id')
+  const result = await query('SELECT * FROM bookings ORDER BY id')
   return result.rows
+}
+
+async function getBookingsForUser(userId) {
+  const result = await query(
+    `SELECT *
+     FROM bookings
+     WHERE user_id = $1
+     ORDER BY created_at DESC`,
+    [userId]
+  )
+  return result.rows
+}
+
+async function getBookingsForHost(hostUserId) {
+  const result = await query(
+    `SELECT b.*
+     FROM bookings b
+     LEFT JOIN events e ON b.event_id = e.id
+     LEFT JOIN spaces s ON b.space_id = s.id
+     WHERE (e.host_user_id = $1) OR (s.host_user_id = $1)
+     ORDER BY b.created_at DESC`,
+    [hostUserId]
+  )
+  return result.rows
+}
+
+async function hostOwnsBooking(hostUserId, bookingId) {
+  const result = await query(
+    `SELECT 1
+     FROM bookings b
+     LEFT JOIN events e ON b.event_id = e.id
+     LEFT JOIN spaces s ON b.space_id = s.id
+     WHERE b.id = $2
+       AND ((e.host_user_id = $1) OR (s.host_user_id = $1))
+     LIMIT 1`,
+    [hostUserId, bookingId]
+  )
+  return result.rows.length > 0
 }
 
 /**
@@ -40,7 +78,7 @@ const getAllBookings = async () => {
  * @returns {object} the booking object, undefined if none found
  */
 const getBookingById = async (id) => {
-  const result = await db.query('SELECT * FROM bookings WHERE id = $1', [id])
+  const result = await query('SELECT * FROM bookings WHERE id = $1', [id])
   return result.rows[0]
 }
 
@@ -50,7 +88,7 @@ const getBookingById = async (id) => {
  * @returns {array} Bookings with joined event/space details
  */
 const getBookingsByUserId = async (userId) => {
-  const result = await db.query(
+  const result = await query(
     `SELECT 
         b.*, 
         e.title as event_title, 
@@ -75,7 +113,7 @@ const getBookingsByUserId = async (userId) => {
  * @returns {array} Bookings for event with user details
  */
 const getBookingsByEventId = async (eventId) => {
-  const result = await db.query(
+  const result = await query(
     `SELECT b.*, u.full_name, u.email
         FROM bookings b
         JOIN users u ON b.user_id = u.id
@@ -87,16 +125,17 @@ const getBookingsByEventId = async (eventId) => {
 }
 
 /**
- * Get all bookings for a space with user details
+ * Get all bookings for a space with user details.
+ * Fixed: filter by b.space_id (was incorrectly b.event_id).
  * @param {number} spaceID
  * @returns {array} Bookings for space with user details
  */
 const getBookingsBySpaceId = async (spaceId) => {
-  const result = await db.query(
+  const result = await query(
     `SELECT b.*, u.full_name, u.email
         FROM bookings b
         JOIN users u ON b.user_id = u.id
-        WHERE b.event_id = $1
+        WHERE b.space_id = $1
         ORDER BY b.id`,
     [spaceId]
   )
@@ -110,7 +149,7 @@ const getBookingsBySpaceId = async (spaceId) => {
  * @returns {object} Updated booking, undefined if not found
  */
 const updateBooking = async (id, quantity, totalPrice, paymentStatus) => {
-  const result = await db.query(
+  const result = await query(
     `UPDATE bookings
         SET quantity = $1, total_price = $2, payment_status = $3
         WHERE id = $4
@@ -126,7 +165,7 @@ const updateBooking = async (id, quantity, totalPrice, paymentStatus) => {
  * @returns {object} Deleted booking, undefined if not found
  */
 const deleteBooking = async (id) => {
-  const result = await db.query(
+  const result = await query(
     `DELETE FROM bookings
         WHERE id = $1
         RETURNING *`,
@@ -142,6 +181,9 @@ module.exports = {
   getBookingsByUserId,
   getBookingsByEventId,
   getBookingsBySpaceId,
+  getBookingsForUser,
+  getBookingsForHost,
+  hostOwnsBooking,
   updateBooking,
   deleteBooking,
 }

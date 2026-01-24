@@ -101,6 +101,85 @@ Now edit both files and replace `<username>` / `<password>`.
 - Do NOT commit `.env` or `.env.test` (they are gitignored)
 - Migrations must be run in order (000 → 003)
 
+---
+
+## Runtime / Hardware
+
+- **Node.js** 20+
+- **PostgreSQL** 15+
+- Works on Windows, macOS, and Linux
+- Minimum 4GB RAM recommended for local development
+
+---
+
+## Key Dependencies and Why
+
+| Package | Purpose |
+|--------|---------|
+| **express** | HTTP server and routing |
+| **pg** | PostgreSQL driver for Node.js |
+| **zod** | Request validation and schema parsing |
+| **jsonwebtoken** | JWT creation and verification for auth |
+| **bcryptjs** | Password hashing |
+| **helmet** | Security headers |
+| **cors** | Cross-origin resource sharing |
+
+---
+
+## Alternatives Considered
+
+- **Validation:** Joi / Yup vs **Zod** — Chose Zod for TypeScript-friendly schemas and concise parsing.
+- **DB access:** Prisma / Knex vs **raw pg** — Chose raw `pg` for learning and explicit SQL control.
+- **Auth:** Session cookies vs **JWT** — Chose JWT for a stateless API style and simpler scaling.
+
+---
+
+## Licensing
+
+Major dependencies use permissive licenses:
+
+- **express**, **pg**, **zod**, **jsonwebtoken**, **bcryptjs**, **helmet**, **cors**: MIT  
+- **dotenv**: BSD-2-Clause  
+
+See each package’s `license` field in `node_modules` or [npm](https://www.npmjs.com/) for details.
+
+---
+
+## Security Model
+
+### Authentication
+- **JWT-based authentication** using `Authorization: Bearer <token>` headers
+- Tokens are signed with `JWT_SECRET` and include user `id` and `role`
+- All protected endpoints require valid JWT tokens (401 if missing/invalid)
+
+### Authorization Rules
+
+**Spaces & Events:**
+- Create/Update/Delete: Requires `host` role
+- Read: Public (no auth required)
+
+**Bookings:**
+- **Create:** Any authenticated user can create bookings for themselves (uses `req.user.id`)
+- **Read:** 
+  - Users can view their own bookings (`scope=mine` or default)
+  - Hosts can view bookings for their hosted events/spaces (`scope=host`)
+- **Update:**
+  - Users can update their own bookings (all fields)
+  - Hosts can only update `paymentStatus` for bookings on their events/spaces
+- **Delete:** Users can delete their own bookings; hosts can delete bookings on their events/spaces
+
+All authorization checks are enforced at the service layer with structured `ApiError` responses.
+
+---
+
+## Style Guide
+
+- **Prettier** + **ESLint** (Airbnb base)
+- Code uses **single quotes**, **no semicolons**, and **trailing commas** (ES5)
+- Run `npm run lint` (if configured) and format with Prettier before committing
+
+---
+
 # CONTRIBUTORS
 
 - [Cat Brandt](https://github.com/catbrandt)

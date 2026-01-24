@@ -1,32 +1,30 @@
-// Import Express
 const express = require('express')
-// Import booking Controller
-const bookingController = require('../controllers/bookings.controller')
-// Create an instance of an Express Router
+const { z } = require('zod')
+
+const requireAuth = require('../middleware/requireAuth')
+const validate = require('../middleware/validate')
+const controller = require('../controllers/bookings.controller')
+const {
+  createBookingSchema,
+  updateBookingSchema,
+  listQuerySchema,
+  idSchema,
+} = require('../services/bookings.service')
+
 const router = express.Router()
+const idParamSchema = z.object({ id: idSchema })
 
-// Create a new booking (requires eventId or SpaceId)
-router.post('/', bookingController.createBooking)
+router.use(requireAuth)
 
-// Get all bookings (supports query filters: userId, eventId, spaceId, paymentStatus)
-router.get('/', bookingController.getAllBookings)
-
-// Get a specific booking by its ID
-router.get('/:id', bookingController.getBookingById)
-
-// Get all bookings for a user (both events and spaces)
-router.get('/user/:userId', bookingController.getBookingsByUserId)
-
-// Get all bookings for an event
-router.get('/event/:eventId', bookingController.getBookingsByEventId)
-
-// Get all bookings for a space
-router.get('/space/:spaceId', bookingController.getBookingsBySpaceId)
-
-// Update a booking
-router.put('/:id', bookingController.updateBooking)
-
-// Delete a booking
-router.delete('/:id', bookingController.deleteBooking)
+router.post('/', validate(createBookingSchema), controller.createBooking)
+router.get('/', validate(listQuerySchema, 'query'), controller.listBookings)
+router.get('/:id', validate(idParamSchema, 'params'), controller.getBookingById)
+router.patch(
+  '/:id',
+  validate(idParamSchema, 'params'),
+  validate(updateBookingSchema),
+  controller.updateBooking
+)
+router.delete('/:id', validate(idParamSchema, 'params'), controller.deleteBooking)
 
 module.exports = router
