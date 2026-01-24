@@ -39,9 +39,9 @@ describe('Booking Controller', () => {
 
     // Creation of test event owned by a host
     const eventResult = await pool.query(
-      `INSERT INTO events (host_user_id, space_id, title, description, category, duration_minutes, start_at,
+      `INSERT INTO events (host_user_id, space_id, title, description, category, start_at,
             end_at, capacity, price_per_spot, status) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
             RETURNING id`,
       [
         testHostUserId,
@@ -49,7 +49,6 @@ describe('Booking Controller', () => {
         'Test Event',
         'A test event',
         'Movement',
-        90,
         '2026-03-02 08:00:00',
         '2026-03-02 09:30:00',
         20,
@@ -66,7 +65,6 @@ describe('Booking Controller', () => {
     await pool.query('DELETE FROM events WHERE host_user_id = $1', [testHostUserId])
     await pool.query('DELETE FROM spaces WHERE host_user_id = $1', [testHostUserId])
     await pool.query('DELETE FROM users WHERE id IN ($1, $2)', [testHostUserId, testUserId])
-    await pool.end()
   })
 
   // Test One: Creation of an event booking
