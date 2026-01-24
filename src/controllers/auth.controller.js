@@ -6,7 +6,7 @@ const { hashPassword, verifyPassword, createToken } = require('../services/auth.
  */
 async function register(req, res, next) {
   try {
-    const { email, password, role } = req.body
+    const { email, password, fullName } = req.body
 
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' })
@@ -22,13 +22,18 @@ async function register(req, res, next) {
     const user = await createUser({
       email,
       passwordHash,
-      role: role || 'user',
+      role: 'user',
+      fullName
     })
 
     const token = createToken(user)
 
     return res.status(201).json({
-      user,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      },
       token,
     })
   } catch (error) {

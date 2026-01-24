@@ -2,6 +2,7 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 
+const usersRoutes = require('./routes/users.routes')
 const authRoutes = require('./routes/auth.routes');
 const bookingsRoutes = require('./routes/bookings.routes');
 const spacesRoutes = require('./routes/spaces.routes');
@@ -18,6 +19,7 @@ app.use(express.json());
 app.get('/health', (req, res) => res.json({ ok: true }));
 
 app.use('/auth', authRoutes);
+app.use('/users', usersRoutes)
 app.use('/bookings', bookingsRoutes);
 app.use('/spaces', spacesRoutes);
 app.use('/events', eventsRoutes);

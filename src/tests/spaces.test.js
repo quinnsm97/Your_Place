@@ -2,6 +2,11 @@ const request = require("supertest");
 const app = require("../app");
 const { query } = require("../db/pool");
 
+const { createToken } = require('../services/auth.service')
+
+const hostToken = createToken({ id: 1, role: 'host' })
+const auth = { Authorization: `Bearer ${hostToken}` }
+
 async function seedSpace({ hostUserId = 1, name = "Test Space" } = {}) {
   const { rows } = await query(
     `INSERT INTO spaces (host_user_id, name, description, address, city, country, capacity)
@@ -16,6 +21,7 @@ describe("Spaces API", () => {
   test("Create (201)", async () => {
     const res = await request(app)
       .post("/spaces")
+      .set(auth)
       .send({
         name: "My Space",
         description: "Nice",
@@ -61,6 +67,7 @@ describe("Spaces API", () => {
     // owned: should update
     const ok = await request(app)
       .patch(`/spaces/${owned.id}`)
+      .set(auth)
       .send({ name: "Updated Name" });
 
     expect(ok.status).toBe(200);
@@ -69,6 +76,7 @@ describe("Spaces API", () => {
     // not owned: should 403
     const forbidden = await request(app)
       .patch(`/spaces/${other.id}`)
+      .set(auth)
       .send({ name: "Hack" });
 
     expect(forbidden.status).toBe(403);
@@ -80,11 +88,11 @@ describe("Spaces API", () => {
     const other = await seedSpace({ hostUserId: 2, name: "Not Mine" });
 
     // not owned: 403
-    const forbidden = await request(app).delete(`/spaces/${other.id}`);
+    const forbidden = await request(app).delete(`/spaces/${other.id}`).set(auth);
     expect(forbidden.status).toBe(403);
 
     // owned: 204
-    const ok = await request(app).delete(`/spaces/${owned.id}`);
+    const ok = await request(app).delete(`/spaces/${owned.id}`).set(auth);
     expect(ok.status).toBe(204);
 
     // should now be 404

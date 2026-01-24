@@ -101,6 +101,13 @@ Now edit both files and replace `<username>` / `<password>`.
 - Do NOT commit `.env` or `.env.test` (they are gitignored)
 - Migrations must be run in order (000 → 003)
 
+## Authentication Notes
+
+- Authentication uses JWT (`Authorization: Bearer <token>`)
+- `requireAuth` now verifies real tokens
+- Tests create users via `/auth/register` instead of stubbing `req.user`
+- `GET /users/me` returns the authenticated user
+
 # CONTRIBUTORS
 
 - [Cat Brandt](https://github.com/catbrandt)

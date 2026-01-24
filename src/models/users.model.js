@@ -20,7 +20,7 @@ async function findUserByEmail(email) {
  * @returns {Object|null}
  */
 async function findUserById(id) {
-  const { rows } = await query('SELECT id, email, role FROM users WHERE id = $1', [id])
+  const { rows } = await query('SELECT id, full_name, email, role FROM users WHERE id = $1', [id])
 
   return rows[0] || null
 }
@@ -33,16 +33,16 @@ async function findUserById(id) {
  * @param {string} user.role
  * @returns {Object}
  */
-async function createUser({ email, passwordHash, role }) {
+
+async function createUser({ email, passwordHash, role, fullName = null }) {
   const { rows } = await query(
     `
-    INSERT INTO users (email, password_hash, role)
-    VALUES ($1, $2, $3)
-    RETURNING id, email, role
+    INSERT INTO users (full_name, email, password_hash, role)
+    VALUES ($1, $2, $3, $4)
+    RETURNING id, full_name, email, role
     `,
-    [email, passwordHash, role]
+    [fullName, email, passwordHash, role]
   )
-
   return rows[0]
 }
 

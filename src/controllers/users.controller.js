@@ -1,7 +1,26 @@
-// Handles request/response logic for users
+const { findUserById } = require('../models/users.model')
+const ApiError = require('../utils/ApiError')
 
-// Receives req/res from routes
+async function getMe(req, res, next) {
+  try {
+    const userId = req.user?.id
+    if (!userId) {
+      throw new ApiError(401, 'UNAUTHORIZED', 'Not authenticated')
+    }
 
-// Calls service or model logic
+    const user = await findUserById(userId)
+    if (!user) {
+      throw new ApiError(404, 'NOT_FOUND', 'User not found')
+    }
 
-// Returns appropriate HTTP responses
+    return res.json({ data: user })
+  } catch (err) {
+    next(err)
+  }
+}
+
+
+
+module.exports = {
+  getMe,
+}
