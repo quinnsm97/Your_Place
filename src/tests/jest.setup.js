@@ -54,6 +54,15 @@ async function ensureHostUsers() {
   )
 }
 
+async function ensureUser2() {
+  // Create user 2 for tests that need a different user
+  await query(
+    `INSERT INTO users (id, email, password_hash, role)
+     VALUES (2, 'test2@example.com', 'dummy_hash', 'host')
+     ON CONFLICT (id) DO UPDATE SET email = EXCLUDED.email, role = EXCLUDED.role`,
+    []
+  );
+}
 beforeAll(async () => {
   await resetAndMigrate()
   await ensureHostUsers()
@@ -64,11 +73,13 @@ beforeEach(async () => {
   await query('DELETE FROM bookings', [])
   await query('DELETE FROM events', [])
   await query('DELETE FROM spaces', [])
+
   // Keep users, but re-ensure roles/emails
   await ensureHostUsers()
 })
 
 afterAll(async () => {
+  // Only do this if you are NOT also ending the pool elsewhere (e.g., globalTeardown)
   if (pool && pool.end) {
     await pool.end()
   }
