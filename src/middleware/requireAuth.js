@@ -4,8 +4,8 @@
  * This is only to unblock feature development.
  */
 function requireAuth(req, res, next) {
-  req.user = { id: 1, role: "host" };
-  next();
+  req.user = { id: 1, role: 'host' }
+  next()
 }
 
-module.exports = requireAuth;
+module.exports = requireAuth

@@ -1,4 +1,4 @@
-const { query } = require("../db/pool");
+const { query } = require('../db/pool')
 
 /**
  * These tests assume:
@@ -17,28 +17,28 @@ async function ensureUser1() {
      VALUES (1, 'test@example.com', 'dummy_hash', 'host')
      ON CONFLICT (id) DO UPDATE SET email = EXCLUDED.email, role = EXCLUDED.role`,
     []
-  );
+  )
 }
 
 beforeAll(async () => {
-  await ensureUser1();
-});
+  await ensureUser1()
+})
 
 beforeEach(async () => {
   // Order matters because of foreign keys
-  await query("DELETE FROM events", []);
-  await query("DELETE FROM spaces", []);
+  await query('DELETE FROM events', [])
+  await query('DELETE FROM spaces', [])
   // Keep users
-  await ensureUser1();
-});
+  await ensureUser1()
+})
 
 afterAll(async () => {
   // Close pool cleanly so Jest exits
-  const { pool } = require("../db/pool");
+  const { pool } = require('../db/pool')
   // If your pool.js exports pool/end, use that instead.
   // This is a safe fallback if you do not export pool directly.
   // If Jest hangs, you should export pool.end() from pool.js and call it here.
   if (pool && pool.end) {
-    await pool.end();
+    await pool.end()
   }
-});
+})

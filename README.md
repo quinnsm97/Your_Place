@@ -24,6 +24,7 @@ This project uses PostgreSQL with separate **development** and **test** database
 ---
 
 ### Prerequisites
+
 - PostgreSQL installed + running
 - `psql` available in your terminal
 - Node.js installed
@@ -45,17 +46,17 @@ This project uses PostgreSQL with separate **development** and **test** database
 Now edit both files and replace `<username>` / `<password>`.
 
 **.env**
-    PORT=3000
-    NODE_ENV=development
-    DATABASE_URL=postgres://<username>:<password>@localhost:5432/your_place_dev
-    JWT_SECRET=replace_me_with_a_random_string
-    JWT_EXPIRES_IN=1d
+PORT=3000
+NODE_ENV=development
+DATABASE_URL=postgres://<username>:<password>@localhost:5432/your_place_dev
+JWT_SECRET=replace_me_with_a_random_string
+JWT_EXPIRES_IN=1d
 
 **.env.test**
-    NODE_ENV=test
-    DATABASE_URL_TEST=postgres://<username>:<password>@localhost:5432/your_place_test
-    JWT_SECRET=replace_me_with_a_random_string
-    JWT_EXPIRES_IN=1d
+NODE_ENV=test
+DATABASE_URL_TEST=postgres://<username>:<password>@localhost:5432/your_place_test
+JWT_SECRET=replace_me_with_a_random_string
+JWT_EXPIRES_IN=1d
 
 ---
 
@@ -98,6 +99,7 @@ Now edit both files and replace `<username>` / `<password>`.
 ---
 
 ### Notes
+
 - Do NOT commit `.env` or `.env.test` (they are gitignored)
 - Migrations must be run in order (000 → 003)
 

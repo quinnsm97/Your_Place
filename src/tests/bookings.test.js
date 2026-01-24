@@ -77,7 +77,7 @@ describe('Booking Controller', () => {
 
   // Test Two: Get all bookings
   it('should get all bookings', async () => {
-    const response = await request (app).get('/bookings')
+    const response = await request(app).get('/bookings')
 
     expect(response.status).toBe(200)
     expect(Array.isArray(response.body)).toBe(true)
@@ -93,7 +93,7 @@ describe('Booking Controller', () => {
 
   // Test Four: Get booking by User ID
   it('should get all bookings for a user', async () => {
-    const reponse = await request(app).get(`/bookings/user/${testUserId}`)
+    const response = await request(app).get(`/bookings/user/${testUserId}`)
 
     expect(response.status).toBe(200)
     expect(Array.isArray(app.response.body)).toBe(true)
