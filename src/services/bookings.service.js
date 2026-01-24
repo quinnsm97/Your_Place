@@ -1,8 +1,8 @@
 const { z } = require('zod')
 const ApiError = require('../utils/ApiError')
 const model = require('../models/bookings.model')
-const eventsModel = require('../models/events.model')
-const spacesModel = require('../models/spaces.model')
+const { getEventById } = require('../models/events.model')
+const { getSpaceById }= require('../models/spaces.model')
 
 // Schema for validating booking ID parameter
 const idParamSchema = z.object({
@@ -93,16 +93,18 @@ async function getBookingsBySpaceId(spaceId) {
  */
 async function createBooking(payload) {
   if (payload.event_id) {
-    const event = await eventsModel.getEventById(payload.event_id)
+    console.log('🔍 Looking for event ID:', payload.event_id)
+    const event = await getEventById(payload.event_id)
+    console.log('🔍 Event found:', event)
     if (!event) throw new ApiError(404, 'NOT_FOUND', 'Event not found')
-
+    
     if (event.capacity < payload.quantity) {
       throw new ApiError(400, 'VALIDATION_ERROR', 'Not enough capacity available')
     }
   }
 
   if (payload.space_id) {
-    const space = await spacesModel.getSpaceById(payload.space_id)
+    const space = await getSpaceById(payload.space_id)
     if (!space) throw new ApiError(404, 'NOT_FOUND', 'Space not found')
 
     if (space.capacity < payload.quantity) {
