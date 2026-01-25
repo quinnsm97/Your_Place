@@ -10,6 +10,16 @@ const updateMeSchema = z
     message: 'At least one field must be provided',
   })
 
+  const idParamSchema = z.object({
+    id: z.coerce.number().int().positive(),
+  })
+  
+  const updateUserRoleSchema = z.object({
+    role: z.enum(['user', 'host', 'admin']),
+  })
+
 module.exports = {
   updateMeSchema,
+  idParamSchema,
+  updateUserRoleSchema,
 }
