@@ -1,5 +1,7 @@
 # Your_Place - Backend API
 
+---
+
 ![Your Place Logo](./assets/your_place_logo.png)
 
 ---
