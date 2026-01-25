@@ -1,5 +1,9 @@
 # Your_Place - Backend API
 
+![Your Place Logo](./assets/your_place_logo.png)
+
+---
+
 Your Place is a backend API (front-end integration and website deployment coming soon!) that supports a platform where hosts can offer spaces and events, allowing users to book those spaces and experiences. The system is designed with two primary user roles - hosts and users - each with distinct capabilities, enforced via authentication and authorisation rules.
 
 Hosts can create, update, and delete listings for spaces and events, providing data such as location, capacity, category, pricing and schedule. Categories including 'Create', 'Move', 'Celebrate', 'Learn' and 'Relax' enable organised filtering of current offerings, allowing users to easily discover spaces and events that align with their personal interests.
