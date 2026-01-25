@@ -1,4 +1,4 @@
-const { findUserById, updateUserById, deleteUserById } = require('../models/users.model')
+const { findUserById, updateUserById, deleteUserById, updateUserRoleById } = require('../models/users.model')
 const ApiError = require('../utils/ApiError')
 
 async function getMe(req, res, next) {
@@ -60,8 +60,26 @@ async function deleteMe(req, res, next) {
   }
 }
 
+/**
+ * Admin-only: update any user's role.
+ * PATCH /users/:id/role
+ */
+async function updateUserRole(req, res, next) {
+  try {
+    const userId = Number(req.params.id)
+
+    const updated = await updateUserRoleById(userId, req.body.role)
+    if (!updated) throw new ApiError(404, 'NOT_FOUND', 'User not found')
+
+    return res.json({ data: updated })
+  } catch (err) {
+    return next(err)
+  }
+}
+
 module.exports = {
   getMe,
   updateMe,
   deleteMe,
+  updateUserRole,
 }

@@ -115,5 +115,5 @@ module.exports = {
   createUser,
   updateUserById,
   deleteUserById,
-  updateUserById,
+  updateUserRoleById,
 }
