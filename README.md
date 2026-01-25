@@ -58,13 +58,19 @@ Internet Connection    | Required            | Required for cloning repository, 
 - Widely used in production APIs, microservices and serverless applications.
 - Implements standard JavaScript (ES5+) features used in the backend project, but is capable of modern ES2022 syntax if needed.
 - Provides non-blocking, event driven runtime ideal for handling requests efficiently.
+
 **Alterntive technologies**
+
 - Python (Django/FastAPI); Java (Spring)
+
 **Why Node.js**
+
 - High-level ecosystem of packages (npm)
 - Shared language with the front-end
 - High performance PAIs and scalability
+
 **Licence**
+
 - MIT - Permissive open-source licence allowing broad usage in both commerical and non-commerical projects.
 
 ### Express
