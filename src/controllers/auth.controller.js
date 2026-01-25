@@ -23,7 +23,7 @@ async function register(req, res, next) {
       email,
       passwordHash,
       role: 'user',
-      fullName
+      fullName,
     })
 
     const token = createToken(user)

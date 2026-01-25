@@ -9,9 +9,7 @@ function requireAuth(req, res, next) {
   const auth = req.headers.authorization
 
   if (!auth || !auth.startsWith('Bearer ')) {
-    return next(
-      new ApiError(401, 'UNAUTHORIZED', 'Missing or invalid Authorization header')
-    )
+    return next(new ApiError(401, 'UNAUTHORIZED', 'Missing or invalid Authorization header'))
   }
 
   const token = auth.slice(7)
@@ -26,4 +24,3 @@ function requireAuth(req, res, next) {
 }
 
 module.exports = requireAuth
-

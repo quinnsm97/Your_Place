@@ -146,4 +146,3 @@ describe('Events API', () => {
     expect(res.body?.error?.code).toBe('UNAUTHORIZED')
   })
 })
-

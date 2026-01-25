@@ -1,4 +1,9 @@
-const { findUserById, updateUserById, deleteUserById, updateUserRoleById } = require('../models/users.model')
+const {
+  findUserById,
+  updateUserById,
+  deleteUserById,
+  updateUserRoleById,
+} = require('../models/users.model')
 const ApiError = require('../utils/ApiError')
 
 async function getMe(req, res, next) {

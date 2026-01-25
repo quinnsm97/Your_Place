@@ -37,11 +37,9 @@ describe('Auth API', () => {
       password,
     })
 
-    const token = login.body.token
+    const { token } = login.body
 
-    const res = await request(app)
-      .get('/users/me')
-      .set('Authorization', `Bearer ${token}`)
+    const res = await request(app).get('/users/me').set('Authorization', `Bearer ${token}`)
 
     expect(res.status).toBe(200)
     expect(res.body.data.email).toBe(email)

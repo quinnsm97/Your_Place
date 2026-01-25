@@ -20,7 +20,10 @@ async function findUserByEmail(email) {
  * @returns {Object|null}
  */
 async function findUserById(id) {
-  const { rows } = await query('SELECT id, full_name, email, role, locale FROM users WHERE id = $1', [id])
+  const { rows } = await query(
+    'SELECT id, full_name, email, role, locale FROM users WHERE id = $1',
+    [id]
+  )
 
   return rows[0] || null
 }

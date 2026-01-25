@@ -10,7 +10,7 @@ Your Place is a backend API (front-end integration and website deployment coming
 
 Hosts can create, update, and delete listings for spaces and events, providing data such as location, capacity, category, pricing and schedule. Categories including 'Create', 'Move', 'Celebrate', 'Learn' and 'Relax' enable organised filtering of current offerings, allowing users to easily discover spaces and events that align with their personal interests.
 
-Users can browse and filter for spaces and events publically, but will require authentication in order to make, update or cancel a booking. The system enforces role-based access control so that users can only manager their own bookings, while hosts can manage bookings related to their listed spaces and/or events. All interactions with the API are  secured through JWT based authentication, ensuring that only authorised actions are permitted.
+Users can browse and filter for spaces and events publically, but will require authentication in order to make, update or cancel a booking. The system enforces role-based access control so that users can only manager their own bookings, while hosts can manage bookings related to their listed spaces and/or events. All interactions with the API are secured through JWT based authentication, ensuring that only authorised actions are permitted.
 
 The platform is inspired by services such as Airbnb, where hosts offer spaces for users to book. However, Your Place extends this concept to include both physical spaces and hosted events, supporting a broad range of offerings such as workshops, study groups, wellness sessions and community activities.
 
@@ -41,13 +41,13 @@ Current platforms or communities often do not provide a unified API driven backe
 
 ### System Hardware Requirements
 
-Component              |  Requirement        | Relevence
------------------------| ------------------- | ------------------------------
-Node.js                | v20+                | Industry-standard JS runtime for backend
-PostgreSQL             | v15+                | Production-grade relational database
-RAM                    | 4GB min.            | Recommunded minimum for local develoment and database operations
-OS                     | windows/macOS/Linux | Cross-platform compatibility
-Internet Connection    | Required            | Required for cloning repository, installation and running the live server on URL
+| Component           | Requirement         | Relevence                                                                        |
+| ------------------- | ------------------- | -------------------------------------------------------------------------------- |
+| Node.js             | v20+                | Industry-standard JS runtime for backend                                         |
+| PostgreSQL          | v15+                | Production-grade relational database                                             |
+| RAM                 | 4GB min.            | Recommunded minimum for local develoment and database operations                 |
+| OS                  | windows/macOS/Linux | Cross-platform compatibility                                                     |
+| Internet Connection | Required            | Required for cloning repository, installation and running the live server on URL |
 
 ## Software Technologies
 
@@ -112,15 +112,15 @@ Internet Connection    | Required            | Required for cloning repository, 
 
 ### Key Dependencies
 
-Package       |  Purpose                     | Relevence
---------------| -------------------          | ------------------------------
-pg            | PostgreSQL client for Node.js| Direct SQL control commonplace in production systems
-isonwebtoken  | JWT creation and verification| Industry standard stateless authentication
-bcryptjs      | Password Hashing             | Secure storage of vulnerable user credentials
-zod           | Request valiidation and schema enforcement | Explicit validation
-helmet        | Secure HTTP headers          | Prevents common web vulnerabilities
-cors          | Cross-Origin Resource Sharing| Required for frontend communication to backend
-dotenv        | Environment variable management| Secure configuration handling
+| Package      | Purpose                                    | Relevence                                            |
+| ------------ | ------------------------------------------ | ---------------------------------------------------- |
+| pg           | PostgreSQL client for Node.js              | Direct SQL control commonplace in production systems |
+| isonwebtoken | JWT creation and verification              | Industry standard stateless authentication           |
+| bcryptjs     | Password Hashing                           | Secure storage of vulnerable user credentials        |
+| zod          | Request valiidation and schema enforcement | Explicit validation                                  |
+| helmet       | Secure HTTP headers                        | Prevents common web vulnerabilities                  |
+| cors         | Cross-Origin Resource Sharing              | Required for frontend communication to backend       |
+| dotenv       | Environment variable management            | Secure configuration handling                        |
 
 ### Alternatives Considered
 
@@ -168,6 +168,7 @@ See each package's `licence` field in `node modules` or [npm](https://www.npmjs.
 This applicaton uses separate environments to prevent test and development data conflicts. This matches real-world deployment practices and ensures safe, repeatable testing.
 
 `.env`(Development)
+
 ```bash
 PORT=5000
 NODE_ENV=development
@@ -177,6 +178,7 @@ JWT_EXPIRES_IN=1d
 ```
 
 `.env.test`(Testing)
+
 ```bash
 NODE_ENV=development
 DATABASE_URL_TEST=postgres://<username>:<password>@localhost:5432/your_place_test
@@ -204,12 +206,12 @@ JWT_EXPIRES_IN=1d
 **Bookings**
 
 - **Create** -> Any authenticated user can create ookings for themselves (uses `req.user.id`)
-- **Read** -> 
-    - Users can view their own bookings (`scope=mine` or default)
-    - Hosts can view bookings for their hosted events/spaces (`scope=host`)
+- **Read** ->
+  - Users can view their own bookings (`scope=mine` or default)
+  - Hosts can view bookings for their hosted events/spaces (`scope=host`)
 - **Update** ->
-    - Users can update their own bookings (all fields)
-    - Hosts can only update `paymentstatus` for bookings on their events/spaces
+  - Users can update their own bookings (all fields)
+  - Hosts can only update `paymentstatus` for bookings on their events/spaces
 - **Delete** -> Users can delete their own bookings; hosts can delete bookings on their events/spaces
 
 **Note regarding Admin/Developer Role (Planned):**
@@ -251,7 +253,7 @@ npm run format
 
 Using a recognised industry style guide demonstrates professional development practices and makes the codebase easier to collaborate on and maintain over time.
 
---- 
+---
 
 ## Database Setup (PostgreSQL)
 

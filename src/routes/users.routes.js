@@ -17,12 +17,12 @@ router.delete('/me', requireAuth, deleteMe)
 
 // Admin-only: promote/demote user roles (e.g., enable a host)
 router.patch(
-    '/:id/role',
-    requireAuth,
-    requireRole('admin'),
-    validate(idParamSchema, 'params'),
-    validate(updateUserRoleSchema),
-    updateUserRole
-  )
+  '/:id/role',
+  requireAuth,
+  requireRole('admin'),
+  validate(idParamSchema, 'params'),
+  validate(updateUserRoleSchema),
+  updateUserRole
+)
 
 module.exports = router
