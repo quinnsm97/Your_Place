@@ -78,12 +78,18 @@ Internet Connection    | Required            | Required for cloning repository, 
 - A lightweight HTTP server and routing framework for builing APIs.
 - Provides middleware-based architecture, aking it eas yto add functionalities such as authentication, logging, and validation.
 - Supports modular, scalable project structures and seemlessly integrates with Node.js.
+
 **Alterntive technologies**
+
 - Fastify; NestJS
+
 **Why Express**
+
 - Widely adopted in industry, making knowledge transferable and widely available.
 - Minimal abstraction allows developers to learn core backend concepts while maintaining flexibility.
+
 **Licence**
+
 - MIT - Permissive open-source licence.
 
 ### PostgreSQL
@@ -91,11 +97,17 @@ Internet Connection    | Required            | Required for cloning repository, 
 - Relational database with strong ACID compliance and advanced SQL features.
 - Supports foreign keys, contraints, triggers, and complex queries, ensuring data integrity.
 - Offers robust indexing, transactional safety, and concurrency handling, making it suitable for production applications.
+
 **Alterntive technologies**
+
 - MYSQL; MongoDB
+
 **Why PostgreSQL**
+
 - Strong data integrity, reliability, and support of complex queries necessary for applications with relational data such as users, spaces, events and bookings.
+
 **Licence**
+
 - PostgreSQL Licence - Permissive open-source licance compatible for commerical use.
 
 ### Key Dependencies
@@ -133,9 +145,13 @@ See each package's `licence` field in `node modules` or [npm](https://www.npmjs.
 
 - Javascript testing framweork
 - Used for automated API tests
+
 **Alterntive technologies**
+
 - Mocha; Vitest
+
 **Why PostgreSQL**
+
 - An all-in-one solution with assertions, mocks and coverage.
 
 ### Supertest
